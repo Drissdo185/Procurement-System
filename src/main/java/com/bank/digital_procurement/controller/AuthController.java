@@ -1,9 +1,18 @@
 package com.bank.digital_procurement.controller;
 
+import com.bank.digital_procurement.dto.UserDto;
+import com.bank.digital_procurement.dto.request.LoginRequest;
+import com.bank.digital_procurement.dto.request.SignupRequest;
+import com.bank.digital_procurement.dto.response.ApiResponse;
+import com.bank.digital_procurement.dto.response.AuthResponse;
 import com.bank.digital_procurement.model.User;
 import com.bank.digital_procurement.repository.UserRepository;
 import com.bank.digital_procurement.security.JwtUtil;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,26 +37,46 @@ public class AuthController {
     @Autowired
     JwtUtil jwtUtil;
 
+    @Value("${jwt.expiration}")
+    private Long jwtExpiration;
+
     @PostMapping("/signin")
-    public String signin(@RequestBody User user) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
-        );
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return jwtUtil.generateToken(userDetails.getUsername());
+    public ResponseEntity<ApiResponse<AuthResponse>> signin(@Valid @RequestBody LoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+            );
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String token = jwtUtil.generateToken(userDetails.getUsername());
+
+            AuthResponse authResponse = new AuthResponse(token, userDetails.getUsername(), jwtExpiration);
+            ApiResponse<AuthResponse> response = ApiResponse.success(authResponse);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponse<AuthResponse> response = ApiResponse.error("Invalid credentials", 4001);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
     }
 
     @PostMapping("/signup")
-    public String registerUser(@RequestBody User user) {
-        if(userRepository.existsByUsername(user.getUsername())) {
-            return "Username is already in use";
+    public ResponseEntity<ApiResponse<UserDto>> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+        if(userRepository.existsByUsername(signupRequest.getUsername())) {
+            ApiResponse<UserDto> response = ApiResponse.error("Username is already taken", 4002);
+            return ResponseEntity.badRequest().body(response);
         }
+
         User newUser = new User(
                 null,
-                user.getUsername(),
-                encoder.encode(user.getPassword())
+                signupRequest.getUsername(),
+                encoder.encode(signupRequest.getPassword())
         );
-        userRepository.save(newUser);
-        return "User registered successfully";
+        User savedUser = userRepository.save(newUser);
+
+        UserDto userDto = new UserDto(savedUser.getId(), savedUser.getUsername());
+        ApiResponse<UserDto> response = ApiResponse.success(userDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
