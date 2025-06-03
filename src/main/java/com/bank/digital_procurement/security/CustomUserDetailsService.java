@@ -1,5 +1,7 @@
 package com.bank.digital_procurement.security;
 
+import com.bank.digital_procurement.exception.AppException;
+import com.bank.digital_procurement.exception.ErrorCode;
 import com.bank.digital_procurement.model.User;
 import com.bank.digital_procurement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,7 @@ public class CustomUserDetailsService  implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException("User Not Found with username: " + username);
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

@@ -5,6 +5,8 @@ import com.bank.digital_procurement.dto.request.LoginRequest;
 import com.bank.digital_procurement.dto.request.SignupRequest;
 import com.bank.digital_procurement.dto.response.ApiResponse;
 import com.bank.digital_procurement.dto.response.AuthResponse;
+import com.bank.digital_procurement.exception.AppException;
+import com.bank.digital_procurement.exception.ErrorCode;
 import com.bank.digital_procurement.model.User;
 import com.bank.digital_procurement.repository.UserRepository;
 import com.bank.digital_procurement.security.JwtUtil;
@@ -14,10 +16,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,17 +56,17 @@ public class AuthController {
             ApiResponse<AuthResponse> response = ApiResponse.success(authResponse);
 
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            ApiResponse<AuthResponse> response = ApiResponse.error("Invalid credentials", 4001);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (BadCredentialsException e) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        } catch (Exception e){
+            throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<UserDto>> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         if(userRepository.existsByUsername(signupRequest.getUsername())) {
-            ApiResponse<UserDto> response = ApiResponse.error("Username is already taken", 4002);
-            return ResponseEntity.badRequest().body(response);
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
 
         User newUser = new User(
