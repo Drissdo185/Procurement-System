@@ -51,6 +51,8 @@ public class WebSecurityConfig{
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/api/auth/**", "/api/test/all").permitAll() // Use 'requestMatchers' instead of 'antMatchers'
+                                .requestMatchers("/api/auth/user").hasAnyRole("ADMIN", "USER")
+                                .requestMatchers("/api/auth/admin").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 );
         // Add the JWT Token filter before the UsernamePasswordAuthenticationFilter

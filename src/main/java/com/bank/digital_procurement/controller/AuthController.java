@@ -7,7 +7,10 @@ import com.bank.digital_procurement.dto.response.ApiResponse;
 import com.bank.digital_procurement.dto.response.AuthResponse;
 import com.bank.digital_procurement.exception.AppException;
 import com.bank.digital_procurement.exception.ErrorCode;
+import com.bank.digital_procurement.model.Role;
+import com.bank.digital_procurement.model.RoleName;
 import com.bank.digital_procurement.model.User;
+import com.bank.digital_procurement.repository.RoleRepository;
 import com.bank.digital_procurement.repository.UserRepository;
 import com.bank.digital_procurement.security.JwtUtil;
 import jakarta.validation.Valid;
@@ -22,6 +25,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/auth")
@@ -41,9 +47,11 @@ public class AuthController {
 
     @Value("${jwt.expiration}")
     private Long jwtExpiration;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @PostMapping("/signin")
-    public ResponseEntity<ApiResponse<AuthResponse>> signin(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<AuthResponse>> signin (@Valid @RequestBody LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
@@ -69,10 +77,16 @@ public class AuthController {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
 
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+                .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
+        roles.add(userRole);
+
         User newUser = new User(
                 null,
                 signupRequest.getUsername(),
-                encoder.encode(signupRequest.getPassword())
+                encoder.encode(signupRequest.getPassword()),
+                roles
         );
         User savedUser = userRepository.save(newUser);
 
