@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Object>> handleAccessDenied(AccessDeniedException ex) {
-        AppException appException = new AppException(ErrorCode.UNAUTHORIZED);
+        AppException appException = new AppException(ErrorCode.PERMISSION_DENIED);
         return handlingAppException(appException);
     }
 
