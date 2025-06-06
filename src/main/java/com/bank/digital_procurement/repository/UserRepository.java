@@ -2,6 +2,7 @@ package com.bank.digital_procurement.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.bank.digital_procurement.model.User;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
