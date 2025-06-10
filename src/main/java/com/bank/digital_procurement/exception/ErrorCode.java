@@ -16,6 +16,13 @@ public enum ErrorCode {
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
     INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
     PERMISSION_DENIED(1009, "Permission denied", HttpStatus.FORBIDDEN),
+    DEPARTMENT_NOT_FOUND(2001, "Department not found", HttpStatus.NOT_FOUND),
+    DEPARTMENT_CODE_EXISTED(2002, "Department code already exists", HttpStatus.BAD_REQUEST),
+    INVALID_PARENT_DEPARTMENT(2003, "Invalid parent department", HttpStatus.BAD_REQUEST),
+    DEPARTMENT_HAS_CHILDREN(2004, "Cannot delete department with children", HttpStatus.BAD_REQUEST),
+    DEPARTMENT_HAS_EMPLOYEES(2005, "Cannot delete department with employees", HttpStatus.BAD_REQUEST),
+    MANAGER_NOT_FOUND(2006, "Manager not found", HttpStatus.NOT_FOUND),
+    CIRCULAR_DEPARTMENT_REFERENCE(2007, "Circular department reference detected", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

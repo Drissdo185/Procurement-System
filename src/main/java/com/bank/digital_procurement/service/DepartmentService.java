@@ -11,21 +11,21 @@ import java.util.List;
 public interface DepartmentService {
     DepartmentDto createDepartment(CreateDepartmentRequest request);
 
-    List<DepartmentDto> getAllDepartments();
-
-    List<DepartmentDto> getRootDepartments();
-
-    DepartmentDto getDepartmentById(Long id);
-
-    DepartmentDto updateDepartment(Long id, UpdateDepartmentRequest request);
-
-    void deleteDepartment(Long id);
-
-    List<DepartmentDto> getActiveDepartments();
-
-    boolean existsByCode(String code);
-
-    List<Object[]> getDepartmentHierarchy(Long departmentId);
+//    List<DepartmentDto> getAllDepartments();
+//
+//    List<DepartmentDto> getRootDepartments();
+//
+//    DepartmentDto getDepartmentById(Long id);
+//
+//    DepartmentDto updateDepartment(Long id, UpdateDepartmentRequest request);
+//
+//    void deleteDepartment(Long id);
+//
+//    List<DepartmentDto> getActiveDepartments();
+//
+//    boolean existsByCode(String code);
+//
+//    List<Object[]> getDepartmentHierarchy(Long departmentId);
 
 
 
