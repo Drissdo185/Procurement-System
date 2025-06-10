@@ -1,12 +1,11 @@
 # Banking-Digital-Procurement-System
 
 
-# JWT
-### Login/Register
-### Logout/ Refresh Token
+admin
+"username": "admin1",
+"password": "admin123"
 
-# Role Base Access Control
-
-# OAuth2
-## Keycloak
+user
+test1
+test123
 
