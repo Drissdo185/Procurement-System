@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig{
+public class WebSecurityConfig {
 
     @Autowired
     CustomUserDetailsService userDetailsService;
@@ -37,21 +37,21 @@ public class WebSecurityConfig{
     ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Updated configuration for Spring Security 6.x
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF
-                .cors(cors -> cors.disable()) // Disable CORS (or configure if needed)
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
                                 .authenticationEntryPoint(unauthorizedHandler)
                                 .accessDeniedHandler(accessDeniedHandler)
-
                 )
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -65,15 +65,16 @@ public class WebSecurityConfig{
                                 .requestMatchers("/api/test/user").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers("/api/test/admin").hasRole("ADMIN")
 
-                                .requestMatchers("/core/depeartments/**").hasRole("ADMIN")
+                                // Department endpoints - Fixed URL pattern
+                                .requestMatchers("/core/departments/**").hasRole("ADMIN")
 
-                                // Department endpoints
+                                // Other department endpoints
                                 .requestMatchers("/api/departments/**").hasAnyRole("ADMIN", "USER")
                                 .anyRequest().authenticated()
                 );
+
         // Add the JWT Token filter before the UsernamePasswordAuthenticationFilter
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
 }

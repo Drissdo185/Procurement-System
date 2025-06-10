@@ -1,4 +1,5 @@
 package com.bank.digital_procurement.model;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,23 +18,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 50)
     private String username;
 
     @Column(nullable = false)
     private String password;
 
-    // ✅ Thêm thông tin cá nhân
-    @Column(name = "full_name")
+    @Column(name = "full_name", length = 100)
     private String fullName;
 
-    @Column(name = "email")
+    @Column(name = "email", length = 100)
     private String email;
 
-    @Column(name = "phone")
+    @Column(name = "phone", length = 20)
     private String phone;
 
-    // ✅ Department relationship
+    // Department relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
@@ -43,8 +43,7 @@ public class User {
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
-
+    private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "manager", fetch = FetchType.LAZY)
     private Set<Department> managedDepartments = new HashSet<>();
@@ -62,6 +61,9 @@ public class User {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (isActive == null) {
+            isActive = true;
+        }
     }
 
     @PreUpdate

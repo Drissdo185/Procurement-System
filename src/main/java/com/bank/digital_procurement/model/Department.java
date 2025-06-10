@@ -1,12 +1,10 @@
 package com.bank.digital_procurement.model;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.catalina.Manager;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,12 +23,13 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 20)
     private String code;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     // Parent-Child relationship
@@ -41,7 +40,6 @@ public class Department {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Department> children = new HashSet<>();
 
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
     private User manager;
@@ -54,6 +52,7 @@ public class Department {
     private BigDecimal spentAmount = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private DepartmentStatus status = DepartmentStatus.ACTIVE;
 
     @Column(name = "created_at")
@@ -62,7 +61,6 @@ public class Department {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
     @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
     private Set<User> employees = new HashSet<>();
 
@@ -70,13 +68,15 @@ public class Department {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (spentAmount == null) {
+            spentAmount = BigDecimal.ZERO;
+        }
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 
     public BigDecimal getRemainingBudget() {
         if (budgetLimit == null) return BigDecimal.ZERO;
