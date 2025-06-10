@@ -1,3 +1,8 @@
+TRUNCATE TABLE users RESTART IDENTITY CASCADE;
+
+-- Hoặc reset sequence thủ công
+ALTER SEQUENCE users_id_seq RESTART WITH 1;
+
 -- Departments (Đơn vị)
 CREATE TABLE departments (
                              id BIGSERIAL PRIMARY KEY,

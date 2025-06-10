@@ -82,12 +82,13 @@ public class AuthController {
                 .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
         roles.add(userRole);
 
-        User newUser = new User(
-                null,
-                signupRequest.getUsername(),
-                encoder.encode(signupRequest.getPassword()),
-                roles
-        );
+        User newUser = new User();
+        newUser.setUsername(signupRequest.getUsername());
+        newUser.setPassword(encoder.encode(signupRequest.getPassword()));
+        newUser.setFullName(signupRequest.getFullName());
+        newUser.setEmail(signupRequest.getEmail());
+        newUser.setPhone(signupRequest.getPhone());
+        newUser.setRoles(roles);
         User savedUser = userRepository.save(newUser);
 
         UserDto userDto = new UserDto(savedUser.getId(), savedUser.getUsername());
