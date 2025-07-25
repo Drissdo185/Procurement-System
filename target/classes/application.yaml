@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: procurement
+
+  datasource:
+    url: jdbc:postgresql://localhost:5333/procurement
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+
+
+jwt:
+  secret: e9fa4786dadbdf5913ca849bc146e242f7fe646694b40ea3c88163461468ef31
+  expiration: 86400000 # 24 hours in milliseconds
