@@ -4,7 +4,7 @@ package com.system.procurement.dto;
 import lombok.Data;
 
 @Data
-public class RequestRegistryDto {
+public class RequestRegistry {
 
     private String username;
     private String email;
