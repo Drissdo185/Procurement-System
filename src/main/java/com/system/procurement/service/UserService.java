@@ -1,8 +1,10 @@
 package com.system.procurement.service;
 
-import com.system.procurement.dto.RequestRegistryDto;
-import org.apache.coyote.Request;
+import com.system.procurement.dto.LoginResponse;
+import com.system.procurement.dto.RequestLogin;
+import com.system.procurement.dto.RequestRegistry;
 
 public interface UserService {
-    RequestRegistryDto register(RequestRegistryDto requestRegistryDto);
+    RequestRegistry register(RequestRegistry requestRegistry);
+    LoginResponse login(RequestLogin requestLogin);
 }
