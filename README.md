@@ -1,6 +1,6 @@
 # Procurement-System
 
-![Overview](images\overview.png)
+![Overview](images/overview.png)
 
 ## Entity Relationship Diagram
 
