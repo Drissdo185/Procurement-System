@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -19,39 +20,37 @@ public class User {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(max = 50)
-    @NotNull
-    @Column(name = "username", nullable = false, length = 50)
-    private String username;
+    @Size(max = 255)
 
-    @Size(max = 100)
-    @NotNull
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Size(max = 255)
+
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Size(max = 255)
-    @NotNull
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @Size(max = 50)
-    @Column(name = "first_name", length = 50)
-    private String firstName;
 
-    @Size(max = 50)
-    @Column(name = "last_name", length = 50)
-    private String lastName;
+    @Column(name = "role", nullable = false, length = 50)
+    private String role;
+
+    @Column(name = "department_id")
+    private Integer departmentId;
 
     @Size(max = 20)
-    @Column(name = "phone", length = 20)
-    private String phone;
+
+    @ColumnDefault("pending")
+    @Column(name = "status", nullable = false, length = 20)
+    private String status;
 
     @Column(name = "created_at")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updatedAt;
 
 }

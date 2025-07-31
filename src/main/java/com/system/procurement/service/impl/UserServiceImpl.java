@@ -3,6 +3,7 @@ package com.system.procurement.service.impl;
 import com.system.procurement.dto.LoginResponse;
 import com.system.procurement.dto.RequestLogin;
 import com.system.procurement.dto.RequestRegistry;
+import com.system.procurement.dto.UserDto;
 import com.system.procurement.entity.User;
 import com.system.procurement.exception.UserAlreadyExistsException;
 import com.system.procurement.repository.UserRepository;
@@ -11,8 +12,6 @@ import com.system.procurement.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,14 +33,15 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException("User with email " + requestRegistry.getEmail() + " already exists");
         }
         User newUser = new User();
-        newUser.setUsername(requestRegistry.getUsername());
+        newUser.setName(requestRegistry.getName());
         newUser.setEmail(requestRegistry.getEmail());
         // Hashing password
         String hashedPassword = passwordEncoder.encode(requestRegistry.getPassword());
-        newUser.setPasswordHash(hashedPassword);
-        newUser.setFirstName(requestRegistry.getFirstName());
-        newUser.setLastName(requestRegistry.getLastName());
-        newUser.setPhone(requestRegistry.getPhone());
+        newUser.setPassword(hashedPassword);
+        newUser.setRole("user");
+        newUser.setStatus("pending");
+        newUser.setCreatedAt(java.time.LocalDateTime.now());
+
         userRepository.save(newUser);
 
         return requestRegistry;
@@ -51,11 +51,23 @@ public class UserServiceImpl implements UserService {
     public LoginResponse login(RequestLogin requestLogin) {
         User user = userRepository.findByEmail(requestLogin.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        if (!passwordEncoder.matches(requestLogin.getPassword(), user.getPasswordHash())) {
+        if (!passwordEncoder.matches(requestLogin.getPassword(), user.getPassword())) {
             throw new RuntimeException("Incorrect password");
         }
         String token = jwtUtil.createToken(user.getEmail());
-        return new LoginResponse(token, user.getUsername());
+        return new LoginResponse(token, user.getName());
 
+    }
+
+    @Override
+    public UserDto getUserByEmail(String email){
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        UserDto userDto = new UserDto();
+        userDto.setName(user.getName());
+        userDto.setEmail(user.getEmail());
+        userDto.setRole(user.getRole());
+        userDto.setDepartmentId(user.getDepartmentId());
+        userDto.setStatus(user.getStatus());
+        return userDto;
     }
 }
