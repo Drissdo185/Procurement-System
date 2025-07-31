@@ -16,7 +16,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/getUser")
+    @GetMapping("/profile")
     public ResponseEntity<UserDto> getUserByEmail(@RequestParam String email) {
         return ResponseEntity.ok(userService.getUserByEmail(email));
     }

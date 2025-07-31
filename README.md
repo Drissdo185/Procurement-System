@@ -136,9 +136,9 @@ erDiagram
 ## Restful API design
 
 ### User CRUD Operations
-- [ ] User login endpoint (POST /api/auth/login)
-- [ ] User registry (User request - director will approach - Change status) endpoint (POST /api/auth/registry)
-- [ ] Get current user profile endpoint (GET /api/users/profile)
+- [x] User login endpoint (POST /api/auth/login)
+- [x] User registry (User request - director will approach - Change status) endpoint (POST /api/auth/registry)
+- [x] Get current user profile endpoint (GET /api/users/profile)
 - [ ] Update current user profile endpoint (PUT /api/users/profile)
 - [ ] Deactivate user (User request - director will approach) endpoint (DELETE /api/users/{id})
 
